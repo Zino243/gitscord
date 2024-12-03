@@ -57,7 +57,8 @@ async def on_ready():
 async def start():
     # Configurar el servidor de uvicorn
     port = int(os.getenv("PORT", 8000))
-    config = Config(app, host="0.0.0.0", port=port)
+    IP = os.getenv("BOT_KEY")
+    config = Config(app, host=IP, port=port)
     server = Server(config)
 
     # Ejecutar FastAPI
