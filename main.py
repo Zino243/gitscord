@@ -9,7 +9,7 @@ import os
 load_dotenv()
 # Configuración del bot de Discord
 TOKEN_DISCORD = os.getenv("BOT_KEY")  # Asegúrate de usar tu token aquí
-CHANNEL_ID = os.getenv("CHANNEL")  # ID del canal de Discord donde se enviarán los mensajes
+CHANNEL_ID = int(os.getenv("CHANNEL"))  # ID del canal de Discord donde se enviarán los mensajes
 
 # Crear los Intents necesarios (especificando los eventos que deseas recibir)
 intents = discord.Intents.default()
@@ -21,6 +21,9 @@ client = discord.Client(intents=intents)
 # Crear la aplicación FastAPI
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "Servicio activo y funcionando correctamente"}
 
 @app.post("/webhook")
 async def github_webhook(request: Request):
@@ -55,8 +58,8 @@ async def on_ready():
 
 # Ejecutar FastAPI y Discord al mismo tiempo
 async def start():
-    # Render asigna automáticamente el puerto desde la variable de entorno
-    port = int(os.getenv("PORT", 8000))  # Toma el puerto de Render o usa 8000 para pruebas locales
+    # Render asigna automáticamente el puerto a través de la variable de entorno PORT
+    port = int(os.getenv("PORT", 8000))  # Por defecto, usa 8000 en local si PORT no está definido
     config = Config(app, host="0.0.0.0", port=port)  # Escucha en todas las interfaces
     server = Server(config)
 
@@ -66,7 +69,6 @@ async def start():
 
     # Ejecutar ambas tareas
     await asyncio.gather(server_task, discord_task)
-
 
 if __name__ == "__main__":
     asyncio.run(start())
