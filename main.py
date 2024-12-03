@@ -56,7 +56,8 @@ async def on_ready():
 # Ejecutar FastAPI y Discord al mismo tiempo
 async def start():
     # Configurar el servidor de uvicorn
-    config = Config(app, host="0.0.0.0", port=8001)
+    port = int(os.getenv("PORT", 8000))
+    config = Config(app, host="0.0.0.0", port=port)
     server = Server(config)
 
     # Ejecutar FastAPI
