@@ -55,23 +55,17 @@ async def on_ready():
 
 # Ejecutar FastAPI y Discord al mismo tiempo
 async def start():
-    # Configurar el servidor de uvicorn
-    port = int(os.getenv("PORT", 8000))
-    IP = os.getenv("BOT_KEY")
-    config = Config(app, host=IP, port=port)
+    # Render asigna automáticamente el puerto desde la variable de entorno
+    port = int(os.getenv("PORT", 8000))  # Toma el puerto de Render o usa 8000 para pruebas locales
+    config = Config(app, host="0.0.0.0", port=port)  # Escucha en todas las interfaces
     server = Server(config)
 
-    # Ejecutar FastAPI
-    loop = asyncio.get_event_loop()
+    # Crear tareas para FastAPI y Discord
+    server_task = asyncio.create_task(server.serve())
+    discord_task = asyncio.create_task(client.start(TOKEN_DISCORD))
 
-    # Iniciar el servidor de FastAPI
-    server_task = loop.create_task(server.serve())
-
-    # Ejecutar el bot de Discord
-    await client.start(TOKEN_DISCORD)  # Iniciar el bot de discord
-
-    # Esperar a que ambos servidores terminen (aunque nunca deberían terminar)
-    await server_task
+    # Ejecutar ambas tareas
+    await asyncio.gather(server_task, discord_task)
 
 
 if __name__ == "__main__":
