@@ -5,6 +5,7 @@ import asyncio
 from uvicorn import Config, Server
 from dotenv import load_dotenv
 import os
+from fastapi.responses import JSONResponse
 
 load_dotenv()
 
@@ -25,6 +26,10 @@ app = FastAPI()
 @app.get("/")
 async def root():
     return {"message": "Servicio activo y funcionando correctamente"}
+
+@app.head("/")
+async def head_root():
+    return JSONResponse(content={}, status_code=200)
 
 @app.post("/webhook")
 async def github_webhook(request: Request):
