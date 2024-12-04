@@ -55,7 +55,10 @@ async def send_message_to_discord(message: str):
 async def on_ready():
     print(f'Bot conectado como {client.user}')
 
-
+async def loop():
+    while True:
+        print("Bot sigue conectado")
+        time.sleep(60)  # Espera 60 segundos
 # Ejecutar FastAPI y Discord al mismo tiempo
 async def start():
     # Render asigna automáticamente el puerto a través de la variable de entorno PORT
@@ -66,6 +69,7 @@ async def start():
     # Crear tareas para FastAPI y Discord
     server_task = asyncio.create_task(server.serve())
     discord_task = asyncio.create_task(client.start(TOKEN_DISCORD))
+    loop = asyncio.create_task(loop())
 
     # Ejecutar ambas tareas
     await asyncio.gather(server_task, discord_task)
